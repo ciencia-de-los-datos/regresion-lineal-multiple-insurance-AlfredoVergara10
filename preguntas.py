@@ -75,7 +75,7 @@ def pregunta_03():
     from sklearn.compose import make_column_selector
     from sklearn.compose import make_column_transformer
     from sklearn.feature_selection import SelectKBest
-    from sklearn.feature_selection import f_regression
+    from sklearn.feature_selection import f_regression, chi2
     from sklearn.linear_model import LinearRegression
     from sklearn.model_selection import GridSearchCV
     from sklearn.pipeline import Pipeline
@@ -94,18 +94,18 @@ def pregunta_03():
                         OneHotEncoder(),
                         make_column_selector(dtype_include=object),
                     ),
-                    remainder='drop',
+                    remainder='passthrough',
                 ),
             ),
             # Paso 2: Construya un selector de características que seleccione las K
             # características más importantes. Utilice la función f_regression.
             (
                 "selectKBest",
-                SelectKBest(score_func=f_regression, k=8),
+                SelectKBest(score_func=f_regression, k=9),
             ),
             # Paso 3: Construya un modelo de regresión lineal.
             (
-                "model",
+                "regressor",
                 LinearRegression(),
             ),
         ],
@@ -117,7 +117,7 @@ def pregunta_03():
     # Defina un diccionario de parámetros para el GridSearchCV. Se deben
     # considerar valores desde 1 hasta 11 regresores para el modelo
     param_grid = {
-        "model__n_jobs": np.arange(1, 12, 1),
+        "regressor__n_jobs": np.arange(1, 12, 1),
     }
 
     # Defina una instancia de GridSearchCV con el pipeline y el diccionario de
@@ -173,8 +173,3 @@ def pregunta_04():
 
     # Retorne el error cuadrático medio para entrenamiento y prueba
     return mse_train, mse_test
-
-mse_train, mse_test = pregunta_04()
-
-print(mse_train)
-print(mse_test)
